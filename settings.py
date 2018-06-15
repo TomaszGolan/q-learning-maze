@@ -41,4 +41,3 @@ class Moves:
     def random_move(position):
         """Make a move in random direction"""
         return Moves.move(position, choice(Moves.ALL))
-
