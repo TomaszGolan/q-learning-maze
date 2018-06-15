@@ -1,7 +1,8 @@
 """Maze - environment for simple q-learning problem"""
-import random
+from random import random, sample
 import numpy as np
 import matplotlib.pyplot as plt
+from settings import Moves, Rewards
 
 
 class Maze:
@@ -26,34 +27,58 @@ class Maze:
         self.visited = set()
 
         # set target's position randomly (unless valid target is provided)
-        self.target = self.set_position(target)
+        self.target = self.init_position(target)
 
         # set agent's position randomly (unless valid target is provided)
-        self.agent = self.set_position(agent)
+        self.agent = self.init_position(agent)
 
-    def set_position(self, position):
+    def init_position(self, position):
         """Return object's position if valid or random free cell otherwise."""
-        return \
-            position if position in self.free \
-            else random.sample(self.free, 1)[0]
+        return position if position in self.free else sample(self.free, 1)[0]
 
-    def visualize(self):
-        """Plot the maze using matplotlib.pyplot.imshow."""
+    def get_snapshot(self):
+        """Get the maze in plotable format"""
         # copy as floats to use with grayscale [0.,1.]
         maze_to_plot = self.maze.astype(float).copy()
 
         # visited in light gray
-        for pos in self.visited: maze_to_plot[pos] = 0.9
+        for pos in self.visited:
+            maze_to_plot[pos] = 0.75
 
         # agent in dark gray
-        maze_to_plot[self.agent] = 0.75
+        maze_to_plot[self.agent] = 0.5
 
-        # target in semi-dark gray
-        maze_to_plot[self.target] = 0.5
+        # target in darker gray
+        maze_to_plot[self.target] = 0.25
 
+        return maze_to_plot
+
+    def visualize(self):
+        """Plot the maze using matplotlib.pyplot.imshow"""
         plt.grid(True)
         plt.xticks(np.arange(0.5, self.maze.shape[0], 1), [])
         plt.yticks(np.arange(0.5, self.maze.shape[1], 1), [])
-        plt.imshow(maze_to_plot, interpolation='none', cmap="gray")
-
+        plt.imshow(self.get_snapshot(), interpolation='none', cmap="gray")
         plt.show()
+
+    def get_valid_moves(self):
+        """Return a list of available moves for current agent's position"""
+        return {m for m in Moves.ALL if Moves.move(self.agent, m) in self.free}
+
+    def move_agent(self, direction):
+        """Make a move and return a reward"""
+
+        # stay in the same cell if it is impossible to move in given direction
+        if direction not in self.get_valid_moves():
+            return Rewards.INVALID
+
+        # keep visited cell for visualization purpose
+        self.visited.add(self.agent)
+
+        # update agent position
+        self.agent = Moves.move(self.agent, direction)
+
+        # get a score for this move
+        return Rewards.VISITED if self.agent in self.visited else (
+               Rewards.SUCCESS if self.agent == self.target else
+               Rewards.VALID)

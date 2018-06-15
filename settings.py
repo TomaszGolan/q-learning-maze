@@ -1,5 +1,10 @@
 """Constants etc..."""
-from random import choice
+import numpy as np
+
+
+class Settings:
+    """Model's settings"""
+    EXPLORE_PROB = 0.1  # the probability of exploration
 
 
 class Rewards:
@@ -13,7 +18,7 @@ class Rewards:
     """
     INVALID, VISITED, VALID, SUCCESS = -1.0, -0.25, 0., 1.
 
-    MIN_REWARDS = -10  # agent loses if total rewards < MIN_REWARDS
+    MIN_REWARDS = -100  # agent loses if total rewards < MIN_REWARDS
 
 
 class Moves:
@@ -32,12 +37,27 @@ class Moves:
     @staticmethod
     def move(position, direction):
         """Return new position"""
-        if direction == Moves.LEFT:    return position[0], position[1] - 1                         
-        elif direction == Moves.RIGHT: return position[0], position[1] + 1
-        elif direction == Moves.UP:    return position[0] - 1, position[1]
-        elif direction == Moves.DOWN:  return position[0] + 1, position[1]
+        if direction == Moves.LEFT:
+            return position[0], position[1] - 1
+        elif direction == Moves.RIGHT:
+            return position[0], position[1] + 1
+        elif direction == Moves.UP:
+            return position[0] - 1, position[1]
+        elif direction == Moves.DOWN:
+            return position[0] + 1, position[1]
 
-    @staticmethod
-    def random_move(position):
-        """Make a move in random direction"""
-        return Moves.move(position, choice(Moves.ALL))
+
+class Mazemaps:
+    """Predefined mazes"""
+    MAP1 = np.array([
+        [1, 1, 0, 0, 1, 0, 0, 1, 1, 0],
+        [1, 0, 1, 0, 1, 1, 1, 1, 0, 0],
+        [1, 1, 1, 0, 1, 0, 1, 1, 1, 1],
+        [0, 1, 0, 1, 1, 0, 1, 1, 0, 1],
+        [1, 1, 1, 0, 0, 0, 1, 0, 0, 0],
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 0],
+        [1, 1, 0, 1, 0, 1, 1, 0, 0, 0],
+        [0, 0, 1, 0, 0, 1, 0, 0, 1, 1],
+        [1, 1, 1, 1, 0, 1, 1, 1, 1, 0],
+        [0, 1, 0, 1, 1, 1, 0, 0, 1, 1]
+    ])
