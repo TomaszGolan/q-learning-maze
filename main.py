@@ -5,6 +5,7 @@ from matplotlib.animation import FuncAnimation
 import click
 from maze import Maze
 from settings import *
+from nets import *
 
 
 @click.group()
@@ -22,6 +23,10 @@ def play(gif_path):
     game_over = False
     total_reward = 0
     nof_moves = 0
+
+    # initialize network
+    sess = tf.Session()
+    model = Net01(sess, maze.maze.shape[0] * maze.maze.shape[1])
 
     # plot settings
     fig = plt.figure()
@@ -42,10 +47,10 @@ def play(gif_path):
 
     def make_a_move(*args):
         """Make a move and update maze snapshot"""
-        nonlocal game_over, total_reward
+        nonlocal game_over, total_reward, model, maze
 
         # move and update reward
-        reward = maze.move_agent(choice(Moves.ALL))
+        reward = maze.move_agent(model.predict(maze.to_vector()))
         total_reward += reward
 
         # check end game conditions
@@ -64,6 +69,7 @@ def play(gif_path):
     # show or save
     plt.show() if not gif_path else game.save(gif_path, writer='imagemagick')
 
+    sess.close()
 
 if __name__ == "__main__":
     main()

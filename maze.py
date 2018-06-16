@@ -82,3 +82,11 @@ class Maze:
         return Rewards.VISITED if self.agent in self.visited else (
                Rewards.SUCCESS if self.agent == self.target else
                Rewards.VALID)
+
+    def to_vector(self):
+        """Return current state as a vector"""
+        maze_state = self.maze.copy()
+        maze_state[self.agent] = 2
+        maze_state[self.target] = 3
+
+        return maze_state.reshape(1, -1)
