@@ -23,16 +23,20 @@ class Maze:
         # cells available for agent
         self.free = {pos for pos, cell in np.ndenumerate(self.maze) if cell}
 
+        # to make it easier keep exit fixed -  in bottom right corner of a maze
+        self.target = (self.maze.shape[0] - 1, self.maze.shape[1] - 1)
+
+        self.reset(agent)
+
+    def reset(self, agent=None):
+        """Reset maze - clear visited cells and reposition agent"""
         # cells already visited by an agent
         self.visited = set()
-
-        # set target's position randomly (unless valid target is provided)
-        self.target = self.init_position(target)
 
         # set agent's position randomly (unless valid target is provided)
         self.agent = self.init_position(agent)
 
-    def init_position(self, position):
+    def init_position(self, position=None):
         """Return object's position if valid or random free cell otherwise."""
         return position if position in self.free else sample(self.free, 1)[0]
 
@@ -86,7 +90,6 @@ class Maze:
     def to_vector(self):
         """Return current state as a vector"""
         maze_state = self.maze.copy()
-        maze_state[self.agent] = 2
-        maze_state[self.target] = 3
+        maze_state[self.agent] = 0.5
 
         return maze_state.reshape(1, -1)

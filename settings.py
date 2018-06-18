@@ -5,6 +5,13 @@ import numpy as np
 class Settings:
     """Model's settings"""
     EXPLORE_PROB = 0.1  # the probability of exploration
+    GAMMA = 0.95        # weight of next move max reward in Q function
+
+    NOF_HIDDEN_NEURONS = 25  # in NET01 - 2 hidden layers (same size)
+    LEARNING_RATE = 1e-3
+    BATCH_SIZE = 256
+
+    NOF_EPOCHS = 100  # here epoch -> one game
 
 
 class Rewards:
@@ -16,9 +23,9 @@ class Rewards:
         valid   - move to available cell
         success - exit found
     """
-    INVALID, VISITED, VALID, SUCCESS = -1.0, -0.25, 0., 1.
+    INVALID, VISITED, VALID, SUCCESS = -0.75, -0.25, -0.05, 1.
 
-    MIN_REWARDS = -100  # agent loses if total rewards < MIN_REWARDS
+    MIN_REWARDS = -25  # agent loses if total rewards < MIN_REWARDS
 
 
 class Moves:
@@ -49,7 +56,15 @@ class Moves:
 
 class Mazemaps:
     """Predefined mazes"""
-    MAP1 = np.array([
+    MAP01 = np.array([
+        [1, 1, 0, 0, 0],
+        [1, 0, 1, 0, 0],
+        [1, 1, 1, 0, 1],
+        [0, 1, 0, 1, 1],
+        [1, 1, 1, 1, 1],
+    ])
+
+    MAP02 = np.array([
         [1, 1, 0, 0, 1, 0, 0, 1, 1, 0],
         [1, 0, 1, 0, 1, 1, 1, 1, 0, 0],
         [1, 1, 1, 0, 1, 0, 1, 1, 1, 1],
